@@ -9,14 +9,14 @@ export class moving_scene_bg extends Component {
     @property(Node)
     bg02: Node = null;
 
-    private m_bg_speed = 10;
+    private m_bg_speed = 3;
     private m_bg_moving_range = 22;     // 图片高度为22
 
     start() {
-        this._init(); 
+        this._init();
     }
 
-    update(deltaTime: number) {        
+    update(deltaTime: number) {
         this.moving_background(deltaTime);
     }
 
