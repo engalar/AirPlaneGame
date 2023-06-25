@@ -1,2 +1,2 @@
 # AirPlaneGame
-cocos game project
+【CocosCreator】game project
