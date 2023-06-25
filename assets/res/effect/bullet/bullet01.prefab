@@ -187,7 +187,6 @@
     "__prefab": {
       "__id__": 8
     },
-    "bullet_speed": 0,
     "_id": ""
   },
   {
@@ -203,6 +202,7 @@
       "__id__": 0
     },
     "fileId": "6bi/Z4TRtI2LHC8uK6zTwt",
+    "instance": null,
     "targetOverrides": null
   }
 ]

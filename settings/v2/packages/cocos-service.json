@@ -17,7 +17,13 @@
       "config_id": "c65752",
       "config_name": "Default",
       "config_remarks": "",
-      "services": []
+      "services": [
+        {
+          "service_id": "550",
+          "enable": false,
+          "param": {}
+        }
+      ]
     }
   ]
 }
