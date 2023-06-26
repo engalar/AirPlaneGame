@@ -544,7 +544,7 @@
     ],
     "value": {
       "__type__": "cc.Vec3",
-      "x": 0,
+      "x": 3.411,
       "y": 1,
       "z": 0
     }
@@ -760,6 +760,17 @@
     "player_plane": {
       "__id__": 12
     },
+    "enemy_plane01": {
+      "__uuid__": "8fb2779b-16fc-43d5-ab8d-9a6b5accef2a",
+      "__expectedType__": "cc.Prefab"
+    },
+    "enemy_plane02": {
+      "__uuid__": "194e2622-d863-4433-a671-2b04c914dd15",
+      "__expectedType__": "cc.Prefab"
+    },
+    "create_enemy_time": 0.5,
+    "enemy01_speed": 6,
+    "enemy02_speed": 5,
     "bullet01": {
       "__uuid__": "86ee37e4-477d-4c51-8684-f9409cfd567b",
       "__expectedType__": "cc.Prefab"
@@ -817,7 +828,7 @@
     "_prefab": null,
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 480,
+      "x": 479.99999999999994,
       "y": 320,
       "z": 0
     },
@@ -901,7 +912,7 @@
     "_priority": 1073741824,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 724.5977011494252,
+    "_orthoHeight": 522.8571428571428,
     "_near": 1,
     "_far": 2000,
     "_color": {
@@ -978,8 +989,8 @@
     "__prefab": null,
     "_alignFlags": 45,
     "_target": null,
-    "_left": 0,
-    "_right": 0,
+    "_left": -5.684341886080802e-14,
+    "_right": -5.684341886080802e-14,
     "_top": 0,
     "_bottom": 0,
     "_horizontalCenter": 0,
