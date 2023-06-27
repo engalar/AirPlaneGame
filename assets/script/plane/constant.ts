@@ -12,6 +12,12 @@ export class constant {
         PLAN2: 2,
         PLAN3: 3,
     };
+
+    public static level = {
+        LEVEL1: 1,
+        LEVEL2: 2,
+        LEVEL3: 3,
+    }
 }
 
 
