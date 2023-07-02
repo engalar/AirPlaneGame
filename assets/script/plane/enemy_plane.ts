@@ -1,14 +1,19 @@
 import { _decorator, Component, Node } from 'cc';
 import { constant } from './constant';
+import { game_manager } from '../framework/game_manager';
 const { ccclass, property } = _decorator;
 
 const OUTOFFRANGE = 11;
 
 @ccclass('enemy_plane')
 export class enemy_plane extends Component {
-    private enemy_speed = 0;
+    @property
+    public create_bullet_time = 0.5;    // 子弹创建周期
 
-    //public enemy_type = constant.enemy_type.TYPE1;  // 敌机类型
+    private m_enemy_speed = 0;
+    private m_is_need_bullet = false;
+    private m_game_manager: game_manager = null;
+    private m_current_bullet_time = 0;    
 
     start() {
 
@@ -17,18 +22,29 @@ export class enemy_plane extends Component {
     update(deltaTime: number) {
         // 设置敌机的运动轨迹
         const pos = this.node.position;
-        const move_pos = this.enemy_speed * deltaTime
-        this.node.setPosition(pos.x, pos.y, pos.z + move_pos);
-       
+        const move_pos = pos.z + this.m_enemy_speed * deltaTime;
+        this.node.setPosition(pos.x, pos.y, move_pos);
+
+        // 创建敌机子弹
+        if(this.m_is_need_bullet)
+        {
+            this.m_current_bullet_time += deltaTime;
+            if(this.m_current_bullet_time > this.create_bullet_time)
+            {
+                this.m_current_bullet_time = 0;
+                this.m_game_manager.create_enemy_bullet(this.node.position);
+            }            
+        }
+
         // 敌机超出屏幕，销毁对象
-        if(move_pos > OUTOFFRANGE){
+        if (move_pos > OUTOFFRANGE) {
             this.node.destroy();
         }
     }
 
-    set_speed(speed: number){
-        this.enemy_speed = speed;
+    set_speed(gm: game_manager, speed: number, need_bullet: boolean) {
+        this.m_game_manager = gm;
+        this.m_enemy_speed = speed;
+        this.m_is_need_bullet = need_bullet;
     }
 }
-
-
