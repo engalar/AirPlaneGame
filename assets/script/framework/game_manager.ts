@@ -1,4 +1,4 @@
-import { _decorator, Component, instantiate, math, Node, Prefab, sp, Vec3 } from 'cc';
+import { _decorator, BoxCollider, Component, instantiate, math, Node, Prefab, sp, Vec3 } from 'cc';
 import { bullet } from '../bullet/bullet';
 import { constant } from '../plane/constant';
 import { enemy_plane } from '../plane/enemy_plane';
@@ -61,13 +61,14 @@ export class game_manager extends Component {
     private init() {
         this.m_current_shooting_time = this.shoot_time;
         this.player_plane.setPosition(0, 0, 9);
-        this.changePlaneMode();
+        this.change_plane_mode();
     }
 
     update(deltaTime: number) {
         this.is_create_bullet(deltaTime);   // 创建子弹判断
         this.create_enemy_plane(deltaTime); // 创建敌机
     }
+
 
     // 玩家子弹相关接口 ///////////////////////////////////////////////////////////////////
     // 根据时间间隔实例化子弹对象
@@ -91,17 +92,45 @@ export class game_manager extends Component {
         blt.setPosition(pos.x, pos.y, pos.z - 1.0);     // 子弹生成的位置
         const bullet_comp = blt.getComponent(bullet);   // 获取子弹的componet
         bullet_comp.set_bullet_speed(this.player_bullet_speed, false);   // 设置子弹的速度
-    }
 
+        // const collision_comp = blt.getComponent(BoxCollider);
+        // collision_comp.setGroup(constant.collision_type.SELF_BULLET);
+        // collision_comp.setMask(constant.collision_type.ENEMY_PLANE);
+        // collision_comp.addMask(constant.collision_type.ENEMY_BULLET);
+    }
+    ///////////////////////////////////////////////////////////////////////////////////
+
+
+    // 敌机子弹相关接口 ///////////////////////////////////////////////////////////////////
     // 实例化敌机子弹对象
-    public create_enemy_bullet(target_pos: Vec3) {
-        const blt = instantiate(this.bullet01);         // 实例子弹对象
+    public create_enemy_bullet(target_pos: Vec3) {        
+        const blt = instantiate(this.bullet01);         // 实例子弹对象 
         blt.setParent(this.bullet_root);                // 将子弹对象挂在到场景中
         blt.setPosition(target_pos.x, target_pos.y, target_pos.z + 1.0);     // 子弹生成的位置
         const bullet_comp = blt.getComponent(bullet);   // 获取子弹的componet
         bullet_comp.set_bullet_speed(this.enemy_bullet_speed, true);   // 设置子弹的速度
+
+        const collision_comp = blt.getComponent(BoxCollider);
+        collision_comp.setGroup(constant.collision_type.ENEMY_BULLET);
+        collision_comp.setMask(constant.collision_type.SELF_PLANE);
+        collision_comp.addMask(constant.collision_type.SELF_BULLET);
     }
     ///////////////////////////////////////////////////////////////////////////////////
+
+
+    // 关卡相关接口 ////////////////////////////////////////////////////////////////////    
+    // 使用定时器来触发回调调整关卡数
+    private change_plane_mode() {
+        this.schedule(this.call_back_level_changed, 10, 3);    // 10秒一次回调，进3次
+    }
+
+    // 设置关卡数
+    private call_back_level_changed() {
+        if(this.m_level_interval === constant.level.LEVEL3) return;
+        this.m_level_interval++;
+    }
+    ///////////////////////////////////////////////////////////////////////////////////
+
 
     // 敌机相关接口 ////////////////////////////////////////////////////////////////////    
     // 创建敌机
@@ -135,17 +164,6 @@ export class game_manager extends Component {
         else {
             // nothing
         }
-    }
-
-    // 使用定时器来触发回调调整关卡数
-    private changePlaneMode() {
-        this.schedule(this.call_back_level_changed, 10, 3);    // 10秒一次回调，进3次
-    }
-
-    // 设置关卡数
-    private call_back_level_changed() {
-        if(this.m_level_interval === constant.level.LEVEL3) return;
-        this.m_level_interval++;
     }
 
     // 敌机组合1（两种类型的敌机随机出现一架）

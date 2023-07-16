@@ -1,0 +1,31 @@
+{
+  "__version__": "1.0.4",
+  "custom_joint_texture_layouts": [],
+  "physics": {
+    "collisionGroups": [
+      {
+        "index": 1,
+        "name": "SELF_PLANE"
+      },
+      {
+        "index": 2,
+        "name": "ENEMY_PLANE"
+      },
+      {
+        "index": 3,
+        "name": "SELF_BULLET"
+      },
+      {
+        "index": 4,
+        "name": "ENEMY_BULLET"
+      }
+    ],
+    "collisionMatrix": {
+      "0": 1,
+      "1": 20,
+      "2": 10,
+      "3": 20,
+      "4": 10
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { _decorator, Component, Node } from 'cc';
+import { _decorator, Component, Node, Collider, ITriggerEvent } from 'cc';
 import { constant } from './constant';
 import { game_manager } from '../framework/game_manager';
 const { ccclass, property } = _decorator;
@@ -13,10 +13,18 @@ export class enemy_plane extends Component {
     private m_enemy_speed = 0;
     private m_is_need_bullet = false;
     private m_game_manager: game_manager = null;
-    private m_current_bullet_time = 0;    
+    private m_current_bullet_time = 0;
 
-    start() {
+    onEnable() {
+        // 监听碰撞
+        const collider = this.getComponent(Collider);
+        collider.on('onTriggerEnter', this.on_trigger_enter, this); // 碰撞触发
+    }
 
+    onDisable() {
+        // 取消对碰撞的监听
+        const collider = this.getComponent(Collider);
+        collider.off('onTriggerEnter', this.on_trigger_enter, this);
     }
 
     update(deltaTime: number) {
@@ -26,14 +34,12 @@ export class enemy_plane extends Component {
         this.node.setPosition(pos.x, pos.y, move_pos);
 
         // 创建敌机子弹
-        if(this.m_is_need_bullet)
-        {
+        if (this.m_is_need_bullet) {
             this.m_current_bullet_time += deltaTime;
-            if(this.m_current_bullet_time > this.create_bullet_time)
-            {
+            if (this.m_current_bullet_time > this.create_bullet_time) {
                 this.m_current_bullet_time = 0;
                 this.m_game_manager.create_enemy_bullet(this.node.position);
-            }            
+            }
         }
 
         // 敌机超出屏幕，销毁对象
@@ -46,5 +52,16 @@ export class enemy_plane extends Component {
         this.m_game_manager = gm;
         this.m_enemy_speed = speed;
         this.m_is_need_bullet = need_bullet;
+    }
+
+    private on_trigger_enter(event: ITriggerEvent) {
+        // 检测与飞机碰撞的物体类型
+        const collision_group = event.otherCollider.getGroup();
+        if (collision_group === constant.collision_type.SELF_PLANE
+            || collision_group === constant.collision_type.SELF_BULLET) {
+            console.log('敌机销毁');
+            this.node.destroy();
+            //this.m_game_manager.add_score();
+        }
     }
 }

@@ -1,4 +1,4 @@
-import { _decorator, Component, Node } from 'cc';
+import { _decorator, Component, Node, Collider,  ITriggerEvent} from 'cc';
 const { ccclass, property } = _decorator;
 
 const OUTOFFRANGE = 11;
@@ -8,8 +8,16 @@ export class bullet extends Component {
     private m_bullet_speed = 0;
     private m_is_enemy_bullet = false;
 
-    start() {
+    onEnable() { 
+        // 监听碰撞
+        const collider = this.getComponent(Collider);
+        collider.on('onTriggerEnter', this.on_trigger_enter, this); // 碰撞触发
+    }
 
+    onDisable() {
+        // 取消对碰撞的监听
+        const collider = this.getComponent(Collider);
+        collider.off('onTriggerEnter', this.on_trigger_enter, this);
     }
 
     update(deltaTime: number) {
@@ -33,5 +41,10 @@ export class bullet extends Component {
     set_bullet_speed(speed: number, is_enemy_bullet: boolean) {
         this.m_bullet_speed = speed;
         this.m_is_enemy_bullet = is_enemy_bullet;
+    }
+
+    private on_trigger_enter(event: ITriggerEvent){
+        console.log('子弹销毁');
+        this.node.destroy();    // 子弹只要发生碰撞后，就直接销毁
     }
 }
