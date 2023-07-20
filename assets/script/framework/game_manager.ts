@@ -93,10 +93,10 @@ export class game_manager extends Component {
         const bullet_comp = blt.getComponent(bullet);   // 获取子弹的componet
         bullet_comp.set_bullet_speed(this.player_bullet_speed, false);   // 设置子弹的速度
 
-        // const collision_comp = blt.getComponent(BoxCollider);
-        // collision_comp.setGroup(constant.collision_type.SELF_BULLET);
-        // collision_comp.setMask(constant.collision_type.ENEMY_PLANE);
-        // collision_comp.addMask(constant.collision_type.ENEMY_BULLET);
+        const collision_comp = blt.getComponent(BoxCollider);
+        collision_comp.setGroup(constant.collision_type.SELF_BULLET);
+        collision_comp.setMask(constant.collision_type.ENEMY_PLANE);
+        collision_comp.addMask(constant.collision_type.ENEMY_BULLET);
     }
     ///////////////////////////////////////////////////////////////////////////////////
 
