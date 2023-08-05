@@ -1,5 +1,5 @@
 import { _decorator, Collider, Component, ITriggerEvent, Node } from 'cc';
-import { constant } from './constant';
+import { constant } from '../framework/constant';
 const { ccclass, property } = _decorator;
 
 @ccclass('self_plane')

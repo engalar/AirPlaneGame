@@ -1,12 +1,13 @@
-import { _decorator, BoxCollider, Component, instantiate, math, Node, Prefab, sp, Vec3 } from 'cc';
+import { _decorator, BoxCollider, Component, instantiate, math, Node, Prefab, sp, Vec3, macro} from 'cc';
 import { bullet } from '../bullet/bullet';
-import { constant } from '../plane/constant';
+import { constant } from './constant';
 import { enemy_plane } from '../plane/enemy_plane';
+import { bullet_prop } from '../bullet/bullet_prop';
 const { ccclass, property } = _decorator;
 
 @ccclass('game_manager')
 export class game_manager extends Component {
-
+    // 共有变量 //////////////////////////////////////////////////////////////////////////
     // 飞机
     @property(Node)
     public player_plane: Node = null;
@@ -22,6 +23,16 @@ export class game_manager extends Component {
     public enemy01_speed = 6.0;
     @property
     public enemy02_speed = 5.0;
+
+    // 道具
+    @property(Prefab)
+    public bullet_prop_H: Prefab = null;
+    @property(Prefab)
+    public bullet_prop_S: Prefab = null;
+    @property(Prefab)
+    public bullet_prop_M: Prefab = null;
+    @property
+    public bullet_prop_speed = 4.0;
 
     // 子弹
     @property(Prefab)
@@ -48,26 +59,36 @@ export class game_manager extends Component {
     public player_bullet_speed = 5;
     @property
     public enemy_bullet_speed = 7;
+    ///////////////////////////////////////////////////////////////////////////////////
 
+
+    // 私有变量 //////////////////////////////////////////////////////////////////////////
     private m_current_shooting_time = 0;    // 当前射击时间
     private m_is_shooting = false;          // 是否射击    
     private m_curr_create_enemy_time = 0;   // 当前敌机创建时间
     private m_level_interval = constant.level.LEVEL1;  // 敌机组合类型状态
+    private m_bullet_prop_type = constant.bullet_prop_type.BULLET_M;    // 子弹道具类型
+    ///////////////////////////////////////////////////////////////////////////////////
 
+
+    // 流程相关接口 //////////////////////////////////////////////////////////////////////
     start() {
         this.init();
     }
 
     private init() {
         this.m_current_shooting_time = this.shoot_time;
-        this.player_plane.setPosition(0, 0, 9);
-        this.change_plane_mode();
+        this.player_plane.setPosition(0, 0, 9);     // 设置玩家飞机的初始位置
+        this.change_plane_mode();                   // 关卡设置
+        this.change_bullet_prope();                 // 道具设置
+        this.create_bullet_prop_changed();//test
     }
 
     update(deltaTime: number) {
         this.is_create_bullet(deltaTime);   // 创建子弹判断
         this.create_enemy_plane(deltaTime); // 创建敌机
     }
+    ///////////////////////////////////////////////////////////////////////////////////
 
 
     // 玩家子弹相关接口 ///////////////////////////////////////////////////////////////////
@@ -75,7 +96,13 @@ export class game_manager extends Component {
     public is_create_bullet(deltaTime: number) {
         this.m_current_shooting_time += deltaTime;
         if (!this.m_is_shooting || this.m_current_shooting_time <= this.shoot_time) return;
-        this.create_self_bullet();
+        if(this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_H) {
+            this.create_self_bullet_H();
+        } else if(this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_S) {
+            this.create_self_bullet_S();
+        } else {
+            this.create_self_bullet_M();
+        }
         this.m_current_shooting_time = 0;
     }
 
@@ -85,18 +112,66 @@ export class game_manager extends Component {
     }
 
     // 实例化子弹对象
-    private create_self_bullet() {
-        const blt = instantiate(this.bullet01);         // 实例子弹对象
-        blt.setParent(this.bullet_root);                // 将子弹对象挂在到场景中
-        const pos = this.player_plane.position;         // 获取当前飞机的位置
-        blt.setPosition(pos.x, pos.y, pos.z - 1.0);     // 子弹生成的位置
-        const bullet_comp = blt.getComponent(bullet);   // 获取子弹的componet
-        bullet_comp.set_bullet_speed(this.player_bullet_speed, false);   // 设置子弹的速度
+    private create_bullet_detail(Bullet: Prefab, offset: number, dir = constant.bullet_dirction.MIDLE){
+        const pos = this.player_plane.position;                         // 获取当前飞机的位置
+        const blt = instantiate(Bullet);                                // 实例子弹对象
+        blt.setParent(this.bullet_root);                                // 将子弹对象挂在到场景中
+        blt.setPosition(pos.x + offset, pos.y, pos.z - 1.0);            // 子弹生成的位置
+        const bullet_comp = blt.getComponent(bullet);                   // 获取子弹的componet
+        bullet_comp.set_bullet_speed(this.player_bullet_speed, false);  // 设置子弹的速度
+        bullet_comp.set_bullet_dirction(dir);
+    }
 
-        const collision_comp = blt.getComponent(BoxCollider);
-        collision_comp.setGroup(constant.collision_type.SELF_BULLET);
-        collision_comp.setMask(constant.collision_type.ENEMY_PLANE);
-        collision_comp.addMask(constant.collision_type.ENEMY_BULLET);
+    private create_self_bullet_M() {
+        this.create_bullet_detail(this.bullet01, 0.0);
+    }
+
+    private create_self_bullet_H() {
+        const pos = this.player_plane.position;        
+        this.create_bullet_detail(this.bullet03, -0.6); // 左
+        this.create_bullet_detail(this.bullet03, 0.6);  // 右
+    }    
+    
+    private create_self_bullet_S() {
+        const pos = this.player_plane.position;
+        this.create_bullet_detail(this.bullet05, 0.0);  // 中
+        this.create_bullet_detail(this.bullet05, -0.6, constant.bullet_dirction.LEFT);  // 左
+        this.create_bullet_detail(this.bullet05, 0.6, constant.bullet_dirction.RIGHT);  // 右
+    }
+    ///////////////////////////////////////////////////////////////////////////////////
+
+
+    // 道具相关接口 /////////////////////////////////////////////////////////////////////
+    // 子弹道具类型修改
+    public change_bullet_type(type: number) {
+        this.m_bullet_prop_type = type;
+    }
+    
+    // 使用定时器来触发回调产生道具
+    private change_bullet_prope() {
+        this.schedule(this.create_bullet_prop_changed, 10, macro.REPEAT_FOREVER);    // 10秒一次回调，进3次
+    }
+
+    // 创建道具
+    private create_bullet_prop_changed() {
+        // 随机选择道具类型
+        const random_prop = math.randomRangeInt(1, 4);
+        let prefeb: Prefab = null;
+        if(random_prop === constant.bullet_prop_type.BULLET_H) {
+            prefeb = this.bullet_prop_H;
+        } else if (random_prop === constant.bullet_prop_type.BULLET_S) {
+            prefeb = this.bullet_prop_S;
+        } else {
+            prefeb = this.bullet_prop_M;
+        }
+
+        // 实例化道具
+        const prop = instantiate(prefeb);
+        prop.setParent(this.node);
+        prop.setPosition(4, 0, -11);
+        const prop_comp = prop.getComponent(bullet_prop);
+        prop_comp.bind_game_manager(this);
+        prop_comp.set_speed(this.bullet_prop_speed);
     }
     ///////////////////////////////////////////////////////////////////////////////////
 
@@ -104,7 +179,7 @@ export class game_manager extends Component {
     // 敌机子弹相关接口 ///////////////////////////////////////////////////////////////////
     // 实例化敌机子弹对象
     public create_enemy_bullet(target_pos: Vec3) {        
-        const blt = instantiate(this.bullet01);         // 实例子弹对象 
+        const blt = instantiate(this.bullet02);         // 实例子弹对象 
         blt.setParent(this.bullet_root);                // 将子弹对象挂在到场景中
         blt.setPosition(target_pos.x, target_pos.y, target_pos.z + 1.0);     // 子弹生成的位置
         const bullet_comp = blt.getComponent(bullet);   // 获取子弹的componet
@@ -226,5 +301,5 @@ export class game_manager extends Component {
             element_comp.set_speed(this, this.enemy02_speed, false);    // 多架敌机组合不发射子弹
         }
     }
-    ////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////
 }
