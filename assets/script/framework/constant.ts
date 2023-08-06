@@ -33,6 +33,7 @@ export class constant {
 
     // 子弹道具类型
     public static bullet_prop_type = {
+        BULLET_I: 0,
         BULLET_M: 1,
         BULLET_H: 2,
         BULLET_S: 3,
@@ -43,5 +44,7 @@ export class constant {
         LEFT: 1,
         MIDLE: 2,
         RIGHT: 3,
+        ROTATION_L: 4,
+        ROTATION_R: 5,
     }
 }

@@ -67,7 +67,7 @@ export class game_manager extends Component {
     private m_is_shooting = false;          // 是否射击    
     private m_curr_create_enemy_time = 0;   // 当前敌机创建时间
     private m_level_interval = constant.level.LEVEL1;  // 敌机组合类型状态
-    private m_bullet_prop_type = constant.bullet_prop_type.BULLET_M;    // 子弹道具类型
+    private m_bullet_prop_type = constant.bullet_prop_type.BULLET_I;    // 子弹道具类型
     ///////////////////////////////////////////////////////////////////////////////////
 
 
@@ -96,13 +96,15 @@ export class game_manager extends Component {
     public is_create_bullet(deltaTime: number) {
         this.m_current_shooting_time += deltaTime;
         if (!this.m_is_shooting || this.m_current_shooting_time <= this.shoot_time) return;
-        if(this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_H) {
+        if(this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_H)
             this.create_self_bullet_H();
-        } else if(this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_S) {
+        else if(this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_S)
             this.create_self_bullet_S();
-        } else {
+        else if(this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_M)
             this.create_self_bullet_M();
-        }
+        else
+            this.create_self_bullet_init();
+
         this.m_current_shooting_time = 0;
     }
 
@@ -118,25 +120,34 @@ export class game_manager extends Component {
         blt.setParent(this.bullet_root);                                // 将子弹对象挂在到场景中
         blt.setPosition(pos.x + offset, pos.y, pos.z - 1.0);            // 子弹生成的位置
         const bullet_comp = blt.getComponent(bullet);                   // 获取子弹的componet
-        bullet_comp.set_bullet_speed(this.player_bullet_speed, false);  // 设置子弹的速度
         bullet_comp.set_bullet_dirction(dir);
+
+        if(dir === constant.bullet_dirction.ROTATION_R) 
+            bullet_comp.set_bullet_speed(this.player_bullet_speed, false);
+        else 
+            bullet_comp.set_bullet_speed(-this.player_bullet_speed, false);
+        
+        bullet_comp.set_init_x_pos(pos.x + offset);
     }
 
-    private create_self_bullet_M() {
+    private create_self_bullet_init() {
         this.create_bullet_detail(this.bullet01, 0.0);
     }
 
-    private create_self_bullet_H() {
-        const pos = this.player_plane.position;        
-        this.create_bullet_detail(this.bullet03, -0.6); // 左
-        this.create_bullet_detail(this.bullet03, 0.6);  // 右
-    }    
-    
-    private create_self_bullet_S() {
-        const pos = this.player_plane.position;
+    private create_self_bullet_M() {       
         this.create_bullet_detail(this.bullet05, 0.0);  // 中
         this.create_bullet_detail(this.bullet05, -0.6, constant.bullet_dirction.LEFT);  // 左
         this.create_bullet_detail(this.bullet05, 0.6, constant.bullet_dirction.RIGHT);  // 右
+    }
+
+    private create_self_bullet_H() {        
+        this.create_bullet_detail(this.bullet01, -0.6); // 左
+        this.create_bullet_detail(this.bullet01, 0.6);  // 右
+    }    
+    
+    private create_self_bullet_S() {
+        this.create_bullet_detail(this.bullet03, -0.6, constant.bullet_dirction.ROTATION_L);   // 旋转
+        this.create_bullet_detail(this.bullet03, 0.6, constant.bullet_dirction.ROTATION_R);   // 旋转
     }
     ///////////////////////////////////////////////////////////////////////////////////
 
