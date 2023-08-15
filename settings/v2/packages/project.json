@@ -32,5 +32,13 @@
       "4": 10,
       "5": 2
     }
+  },
+  "general": {
+    "designResolution": {
+      "fitHeight": true,
+      "width": 1080,
+      "height": 2400,
+      "fitWidth": true
+    }
   }
 }

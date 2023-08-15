@@ -61,7 +61,7 @@ export class enemy_plane extends Component {
             || collision_group === constant.collision_type.SELF_BULLET) {
             console.log('敌机销毁');
             this.node.destroy();
-            //this.m_game_manager.add_score();
+            this.m_game_manager.add_score();
         }
     }
 }
