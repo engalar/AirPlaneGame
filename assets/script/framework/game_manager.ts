@@ -1,9 +1,10 @@
-import { _decorator, BoxCollider, Component, instantiate, math, Node, Prefab, sp, Vec3, macro, Label} from 'cc';
+import { _decorator, BoxCollider, Component, instantiate, math, Node, Prefab, sp, Vec3, macro, Label, Animation} from 'cc';
 import { bullet } from '../bullet/bullet';
 import { constant } from './constant';
 import { enemy_plane } from '../plane/enemy_plane';
 import { bullet_prop } from '../bullet/bullet_prop';
 import { self_plane } from '../plane/self_plane';
+import { audio_manager } from './audio_manager';
 const { ccclass, property } = _decorator;
 
 @ccclass('game_manager')
@@ -70,6 +71,12 @@ export class game_manager extends Component {
     public gameing_score_UI: Label = null;
     @property(Label)
     public game_over_score_UI: Label = null;
+    @property(Animation)
+    public overAnim: Animation = null;
+
+    // 音频
+    @property(audio_manager)
+    public audio_mg: audio_manager = null;
 
     ///////////////////////////////////////////////////////////////////////////////////
 
@@ -127,6 +134,7 @@ export class game_manager extends Component {
         this.change_plane_mode();                       // 关卡设置
         this.change_bullet_prope();                     // 道具设置        
         this.gameing_score_UI.string = this.m_score.toString();
+        this.overAnim.play();
     }
     
     public return_gameing() {        
@@ -135,9 +143,12 @@ export class game_manager extends Component {
 
     public game_over() {
         this.m_is_game_start = false;
+
         this.gameing_UI.active = false;
         this.game_over_UI.active = true;
-        this.game_over_score_UI.string = this.m_score.toString();
+        
+        this.game_over_score_UI.string = this.m_score.toString();        
+
         this.init();
         this.unschedule(this.create_bullet_prop_changed);   // 取消道具产生的回调
         this.unschedule(this.call_back_level_changed);      // 取消关卡的回调
@@ -150,20 +161,34 @@ export class game_manager extends Component {
     }
     /////////////////////////////////////////////////////////////////////////////////////
 
+    // 音效相关接口 ///////////////////////////////////////////////////////////////////
+    public play_audio_Effect(name: string, vol = 1.0) {
+        this.audio_mg.play(name, vol);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
     // 玩家子弹相关接口 ///////////////////////////////////////////////////////////////////
     // 根据时间间隔实例化子弹对象
     public is_create_bullet(deltaTime: number) {
         this.m_current_shooting_time += deltaTime;
         if (!this.m_is_shooting || this.m_current_shooting_time <= this.shoot_time) return;
-        if(this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_H)
+        if(this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_H) {
             this.create_self_bullet_H();
-        else if(this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_S)
+            this.play_audio_Effect("bullet1", 0.3);
+        }            
+        else if(this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_S) {
             this.create_self_bullet_S();
-        else if(this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_M)
+            this.play_audio_Effect("bullet1", 0.3);
+        }
+        else if(this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_M) {
             this.create_self_bullet_M();
-        else
+            this.play_audio_Effect("bullet1", 0.3);
+        }
+        else {
             this.create_self_bullet_init();
-
+            this.play_audio_Effect("bullet2", 0.3);
+        }
         this.m_current_shooting_time = 0;
     }
 

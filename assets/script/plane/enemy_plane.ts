@@ -58,10 +58,10 @@ export class enemy_plane extends Component {
         // 检测与飞机碰撞的物体类型
         const collision_group = event.otherCollider.getGroup();
         if (collision_group === constant.collision_type.SELF_PLANE
-            || collision_group === constant.collision_type.SELF_BULLET) {
-            console.log('敌机销毁');
+            || collision_group === constant.collision_type.SELF_BULLET) {            
             this.node.destroy();
             this.m_game_manager.add_score();
+            this.m_game_manager.play_audio_Effect("enemy");
         }
     }
 }

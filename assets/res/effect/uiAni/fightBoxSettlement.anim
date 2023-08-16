@@ -4,18 +4,7 @@
     "_name": "fightBoxSettlement",
     "_objFlags": 0,
     "__editorExtras__": {
-      "embeddedPlayerGroups": [
-        {
-          "key": "1691934098106",
-          "name": "animation-clip",
-          "type": "animation-clip"
-        },
-        {
-          "key": "1691934102332",
-          "name": "animation-clip",
-          "type": "animation-clip"
-        }
-      ]
+      "embeddedPlayerGroups": []
     },
     "_native": "",
     "sample": 60,
@@ -34,14 +23,7 @@
     ],
     "_exoticAnimation": null,
     "_events": [],
-    "_embeddedPlayers": [
-      {
-        "__id__": 24
-      },
-      {
-        "__id__": 26
-      }
-    ]
+    "_embeddedPlayers": []
   },
   {
     "__type__": "cc.animation.VectorTrack",
@@ -692,39 +674,5 @@
     ],
     "preExtrapolation": 1,
     "postExtrapolation": 1
-  },
-  {
-    "__type__": "cc.animation.EmbeddedPlayer",
-    "__editorExtras__": {
-      "group": "1691934098106"
-    },
-    "begin": 0,
-    "end": 0.08333333333333333,
-    "reconciledSpeed": false,
-    "playable": {
-      "__id__": 25
-    }
-  },
-  {
-    "__type__": "cc.animation.EmbeddedAnimationClipPlayable",
-    "path": "",
-    "clip": null
-  },
-  {
-    "__type__": "cc.animation.EmbeddedPlayer",
-    "__editorExtras__": {
-      "group": "1691934102332"
-    },
-    "begin": 0,
-    "end": 0.08333333333333333,
-    "reconciledSpeed": false,
-    "playable": {
-      "__id__": 27
-    }
-  },
-  {
-    "__type__": "cc.animation.EmbeddedAnimationClipPlayable",
-    "path": "",
-    "clip": null
   }
 ]

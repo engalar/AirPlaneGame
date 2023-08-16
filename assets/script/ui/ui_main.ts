@@ -37,23 +37,28 @@ export class ui_main extends Component {
         this.gameoverUI.active = false;
         this.gameingUI.active = true;
         this.game_manager_ptr.return_gameing();
+        this.game_manager_ptr.play_audio_Effect("button");
     }
 
     public return_game_start() {
         this.gameoverUI.active = false;
         this.gameStartUI.active = true;
+        this.game_manager_ptr.play_audio_Effect("button");
     }
     ///////////////////////////////////////////////////////////////////////////
 
 
     // 玩家飞机 移动\子弹发射 相关接口 ///////////////////////////////////////////
     touch_start(event: EventTouch){
+        if(this.gameoverUI.active) return;
+
         if(this.game_manager_ptr.is_game_start()){
             this.game_manager_ptr.is_shooting(true);// 游戏开始后为射击子弹
         } else {
             this.gameStartUI.active = false;        // 游戏未开始时为结束起始UI 激活开始游戏UI
             this.gameingUI.active = true;            
             this.game_manager_ptr.game_start();
+            this.game_manager_ptr.play_audio_Effect("button");
         }
     }
    

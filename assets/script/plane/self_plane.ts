@@ -1,4 +1,4 @@
-import { _decorator, Collider, Component, ITriggerEvent, Node } from 'cc';
+import { _decorator, AudioSource, Collider, Component, ITriggerEvent, Node } from 'cc';
 import { constant } from '../framework/constant';
 const { ccclass, property } = _decorator;
 
@@ -8,6 +8,11 @@ export class self_plane extends Component {
 
     private m_life_limit = 5;
     private m_current_life = 0;
+    private m_audio_source:AudioSource = null;
+
+    start() {
+        this.m_audio_source = this.getComponent(AudioSource);
+    }
 
     onEnable() {
         // 监听碰撞
@@ -32,7 +37,10 @@ export class self_plane extends Component {
         if (collision_group === constant.collision_type.ENEMY_PLANE
             || collision_group === constant.collision_type.ENEMY_BULLET) {
             --this.m_current_life;
-            if(0 >= this.m_current_life) this.m_is_die = true;
+            if(0 >= this.m_current_life) {
+                this.m_is_die = true;
+                this.m_audio_source.play();
+            }
         }
     }
 }
