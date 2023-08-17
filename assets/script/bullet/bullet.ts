@@ -1,5 +1,6 @@
 import { _decorator, Component, Node, Collider,  ITriggerEvent} from 'cc';
 import { constant } from '../framework/constant';
+import { pool_manager } from '../framework/pool_manager';
 const { ccclass, property } = _decorator;
 
 const OUTOFFRANGE_Z = 11;
@@ -63,7 +64,7 @@ export class bullet extends Component {
 
         // 销毁子弹
         if (Math.abs(move_z) > OUTOFFRANGE_Z || Math.abs(move_x) > OUTOFFRANGE_x) {
-            this.node.destroy();
+            pool_manager.instance().putNode(this.node);
         }
     }
 
@@ -81,7 +82,6 @@ export class bullet extends Component {
     }
 
     private on_trigger_enter(event: ITriggerEvent){
-        console.log('子弹销毁');
-        this.node.destroy();    // 子弹只要发生碰撞后，就直接销毁
+        pool_manager.instance().putNode(this.node);
     }
 }

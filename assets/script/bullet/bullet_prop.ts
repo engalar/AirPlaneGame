@@ -1,6 +1,7 @@
 import { _decorator, Component, Node, Collider, ITriggerEvent, log } from 'cc';
 import { game_manager } from '../framework/game_manager';
 import { constant } from '../framework/constant';
+import { pool_manager } from '../framework/pool_manager';
 const { ccclass, property } = _decorator;
 
 @ccclass('bullet_prop')
@@ -36,7 +37,7 @@ export class bullet_prop extends Component {
         this.node.setPosition(pos_x, pos.y, pos_z);
 
         if(pos_z > 50) {
-            this.node.destroy();
+            pool_manager.instance().putNode(this.node);
         }
     }
 
@@ -59,8 +60,7 @@ export class bullet_prop extends Component {
             this.m_gm.change_bullet_type(constant.bullet_prop_type.BULLET_M);
         }
 
-        this.node.destroy();    // 道具碰撞完后销毁
-        console.log(name + "道具销毁");
+        pool_manager.instance().putNode(this.node);
     }
 }
 

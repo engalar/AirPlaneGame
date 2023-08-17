@@ -5,6 +5,7 @@ import { enemy_plane } from '../plane/enemy_plane';
 import { bullet_prop } from '../bullet/bullet_prop';
 import { self_plane } from '../plane/self_plane';
 import { audio_manager } from './audio_manager';
+import { pool_manager } from './pool_manager';
 const { ccclass, property } = _decorator;
 
 @ccclass('game_manager')
@@ -143,12 +144,9 @@ export class game_manager extends Component {
 
     public game_over() {
         this.m_is_game_start = false;
-
         this.gameing_UI.active = false;
-        this.game_over_UI.active = true;
-        
-        this.game_over_score_UI.string = this.m_score.toString();        
-
+        this.game_over_UI.active = true;        
+        this.game_over_score_UI.string = this.m_score.toString();
         this.init();
         this.unschedule(this.create_bullet_prop_changed);   // 取消道具产生的回调
         this.unschedule(this.call_back_level_changed);      // 取消关卡的回调
@@ -156,8 +154,14 @@ export class game_manager extends Component {
     }
 
     public destroy_all_obj() {
-        this.node.destroyAllChildren();
-        this.bullet_root.destroyAllChildren();
+        let length = this.node.children.length;
+        for(let i = length - 1; i >= 0; --i)
+            pool_manager.instance().putNode(this.node.children[i]);
+
+        length = this.bullet_root;
+        for(let i = length - 1; i >= 0; --i)
+            pool_manager.instance().putNode(this.bullet_root.children[i]);
+
     }
     /////////////////////////////////////////////////////////////////////////////////////
 
@@ -199,9 +203,8 @@ export class game_manager extends Component {
 
     // 实例化子弹对象
     private create_bullet_detail(Bullet: Prefab, offset: number, dir = constant.bullet_dirction.MIDLE){
-        const pos = this.player_plane.node.position;                         // 获取当前飞机的位置
-        const blt = instantiate(Bullet);                                // 实例子弹对象
-        blt.setParent(this.bullet_root);                                // 将子弹对象挂在到场景中
+        const pos = this.player_plane.node.position;                    // 获取当前飞机的位置
+        const blt = pool_manager.instance().getNode(Bullet, this.bullet_root);  // 实例子弹对象
         blt.setPosition(pos.x + offset, pos.y, pos.z - 1.0);            // 子弹生成的位置
         const bullet_comp = blt.getComponent(bullet);                   // 获取子弹的componet
         bullet_comp.set_bullet_dirction(dir);
@@ -261,8 +264,7 @@ export class game_manager extends Component {
         }
 
         // 实例化道具
-        const prop = instantiate(prefeb);
-        prop.setParent(this.node);
+        const prop = pool_manager.instance().getNode(prefeb, this.node);
         prop.setPosition(4, 0, -11);
         const prop_comp = prop.getComponent(bullet_prop);
         prop_comp.bind_game_manager(this);
@@ -278,12 +280,11 @@ export class game_manager extends Component {
 
     // 敌机子弹相关接口 ///////////////////////////////////////////////////////////////////
     // 实例化敌机子弹对象
-    public create_enemy_bullet(target_pos: Vec3) {        
-        const blt = instantiate(this.bullet02);         // 实例子弹对象 
-        blt.setParent(this.bullet_root);                // 将子弹对象挂在到场景中
-        blt.setPosition(target_pos.x, target_pos.y, target_pos.z + 1.0);     // 子弹生成的位置
-        const bullet_comp = blt.getComponent(bullet);   // 获取子弹的componet
-        bullet_comp.set_bullet_speed(this.enemy_bullet_speed, true);   // 设置子弹的速度
+    public create_enemy_bullet(target_pos: Vec3) {  
+        const blt = pool_manager.instance().getNode(this.bullet02, this.bullet_root);      
+        blt.setPosition(target_pos.x, target_pos.y, target_pos.z + 1.0);    // 子弹生成的位置
+        const bullet_comp = blt.getComponent(bullet);                       // 获取子弹的componet
+        bullet_comp.set_bullet_speed(this.enemy_bullet_speed, true);        // 设置子弹的速度
 
         const collision_comp = blt.getComponent(BoxCollider);
         collision_comp.setGroup(constant.collision_type.ENEMY_BULLET);
@@ -312,12 +313,12 @@ export class game_manager extends Component {
     private create_enemy_plane(deltaTime: number) {
         this.m_curr_create_enemy_time += deltaTime;
         if (this.m_level_interval === constant.level.LEVEL1
-            && this.m_curr_create_enemy_time > this.create_enemy_time) {
+            && this.m_curr_create_enemy_time > this.create_enemy_time * 3.0) {
             this.create_combination1();
             this.m_curr_create_enemy_time = 0;
         }
         else if (this.m_level_interval === constant.level.LEVEL2
-            && this.m_curr_create_enemy_time > this.create_enemy_time * 0.8) {
+            && this.m_curr_create_enemy_time > this.create_enemy_time * 2.0) {
             const combination = math.randomRangeInt(1, 3); // 随机出现2种敌机组合            
             if (combination === constant.enemy_combination.PLAN1)
                 this.create_combination1();
@@ -326,7 +327,7 @@ export class game_manager extends Component {
             this.m_curr_create_enemy_time = 0;
         }
         else if (this.m_level_interval === constant.level.LEVEL3
-            && this.m_curr_create_enemy_time > this.create_enemy_time * 0.6) {
+            && this.m_curr_create_enemy_time > this.create_enemy_time * 1.0) {
             const combination = math.randomRangeInt(1, 4); // 随机出现3种敌机组合
             if (combination === constant.enemy_combination.PLAN1)
                 this.create_combination1();
@@ -356,9 +357,8 @@ export class game_manager extends Component {
             speed = this.enemy02_speed;
         }
 
-        // 实例化敌机对象
-        const enemy = instantiate(prefab);
-        enemy.setParent(this.node);
+        // 实例化敌机对象        
+        const enemy = pool_manager.instance().getNode(prefab, this.node);
         const enemy_comp = enemy.getComponent(enemy_plane);
         enemy_comp.set_speed(this, speed, true);    // 单价敌机发射子弹
 
@@ -371,9 +371,8 @@ export class game_manager extends Component {
     private create_combination2() {
         const enemyArray = new Array<Node>(5);
         for (let i = 0; i < enemyArray.length; ++i) {
-            enemyArray[i] = instantiate(this.enemy_plane01);    // 默认第一种敌机
+            enemyArray[i] = pool_manager.instance().getNode(this.enemy_plane01, this.node);    // 默认第一种敌机
             const element = enemyArray[i];
-            element.setParent(this.node);
             element.setPosition(-4 + i * 2, 0, -11);
             const element_comp = element.getComponent(enemy_plane);
             element_comp.set_speed(this, this.enemy01_speed, false);    // 多架敌机组合不发射子弹
@@ -392,9 +391,8 @@ export class game_manager extends Component {
         ];
 
         for (let i = 0; i < enemyArray.length; ++i) {
-            enemyArray[i] = instantiate(this.enemy_plane02);    // 默认第二种敌机
+            enemyArray[i] = pool_manager.instance().getNode(this.enemy_plane02, this.node);    // 默认第二种敌机
             const element = enemyArray[i];
-            element.setParent(this.node);
             const strat_index = i * 3;
             element.setPosition(pos[strat_index], pos[strat_index + 1], pos[strat_index + 2]);
             const element_comp = element.getComponent(enemy_plane);

@@ -1,6 +1,7 @@
-import { _decorator, Component, Node, Collider, ITriggerEvent } from 'cc';
+import { _decorator, Component, Node, Collider, ITriggerEvent} from 'cc';
 import { constant } from '../framework/constant';
 import { game_manager } from '../framework/game_manager';
+import { pool_manager } from '../framework/pool_manager';
 const { ccclass, property } = _decorator;
 
 const OUTOFFRANGE = 11;
@@ -44,7 +45,7 @@ export class enemy_plane extends Component {
 
         // 敌机超出屏幕，销毁对象
         if (move_pos > OUTOFFRANGE) {
-            this.node.destroy();
+            pool_manager.instance().putNode(this.node);
         }
     }
 
@@ -59,7 +60,7 @@ export class enemy_plane extends Component {
         const collision_group = event.otherCollider.getGroup();
         if (collision_group === constant.collision_type.SELF_PLANE
             || collision_group === constant.collision_type.SELF_BULLET) {            
-            this.node.destroy();
+            pool_manager.instance().putNode(this.node);
             this.m_game_manager.add_score();
             this.m_game_manager.play_audio_Effect("enemy");
         }
