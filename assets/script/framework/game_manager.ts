@@ -26,6 +26,8 @@ export class game_manager extends Component {
     public enemy01_speed = 6.0;
     @property
     public enemy02_speed = 5.0;
+    @property(Prefab)
+    public enemy_explode: Prefab = null;
 
     // 道具
     @property(Prefab)
@@ -107,7 +109,7 @@ export class game_manager extends Component {
         this.m_level_interval = constant.level.LEVEL1;
         this.m_bullet_prop_type = constant.bullet_prop_type.BULLET_I;
         this.m_score = 0;
-        this.player_plane.node.setPosition(0, 0, 9);    // 设置玩家飞机的初始位置 
+        this.player_plane.node.setPosition(0, 3, 9);    // 设置玩家飞机的初始位置 
     }   
 
     update(deltaTime: number) {
@@ -265,7 +267,7 @@ export class game_manager extends Component {
 
         // 实例化道具
         const prop = pool_manager.instance().getNode(prefeb, this.node);
-        prop.setPosition(4, 0, -11);
+        prop.setPosition(4, 3, -11);
         const prop_comp = prop.getComponent(bullet_prop);
         prop_comp.bind_game_manager(this);
         prop_comp.set_speed(this.bullet_prop_speed);
@@ -309,6 +311,12 @@ export class game_manager extends Component {
 
 
     // 敌机相关接口 ////////////////////////////////////////////////////////////////////    
+    // 敌机爆炸特效
+    public build_enemy_explode(pos: Vec3) {
+        const enemy_explode = pool_manager.instance().getNode(this.enemy_explode, this.node);
+        enemy_explode.setPosition(pos);
+    }
+
     // 创建敌机
     private create_enemy_plane(deltaTime: number) {
         this.m_curr_create_enemy_time += deltaTime;
@@ -364,7 +372,7 @@ export class game_manager extends Component {
 
         // 设置敌机的初始位置
         const random_pos = math.randomRangeInt(-4, 5);
-        enemy.setPosition(random_pos, 0, -11);    // x轴位置随机，z轴位置为背景顶部
+        enemy.setPosition(random_pos, 3, -11);    // x轴位置随机，z轴位置为背景顶部
     }
 
     // 敌机组合2（两种类型的敌机随机出现一字型队列）
@@ -373,7 +381,7 @@ export class game_manager extends Component {
         for (let i = 0; i < enemyArray.length; ++i) {
             enemyArray[i] = pool_manager.instance().getNode(this.enemy_plane01, this.node);    // 默认第一种敌机
             const element = enemyArray[i];
-            element.setPosition(-4 + i * 2, 0, -11);
+            element.setPosition(-4 + i * 2, 3, -11);
             const element_comp = element.getComponent(enemy_plane);
             element_comp.set_speed(this, this.enemy01_speed, false);    // 多架敌机组合不发射子弹
         }
@@ -383,11 +391,11 @@ export class game_manager extends Component {
     private create_combination3() {
         const enemyArray = new Array<Node>(5);
         const pos = [
-            -4, 0, -15,
-            -2, 0, -13,
-            0, 0, -11,
-            2, 0, -13,
-            4, 0, -15,
+            -4, 3, -15,
+            -2, 3, -13,
+            0, 3, -11,
+            2, 3, -13,
+            4, 3, -15,
         ];
 
         for (let i = 0; i < enemyArray.length; ++i) {

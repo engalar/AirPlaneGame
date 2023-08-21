@@ -63,6 +63,7 @@ export class enemy_plane extends Component {
             pool_manager.instance().putNode(this.node);
             this.m_game_manager.add_score();
             this.m_game_manager.play_audio_Effect("enemy");
+            this.m_game_manager.build_enemy_explode(this.node.position);
         }
     }
 }
