@@ -26,11 +26,7 @@ export class ui_main extends Component {
         this.node.on(Input.EventType.TOUCH_END, this.touch_end, this);
 
         this.gameStartUI.active = true;
-    }
-    
-    update(deltaTime: number) {
-        
-    }
+    }      
     
     // UI界面场景调度相关接口 ///////////////////////////////////////////////////
     public return_gameing() {
@@ -46,7 +42,6 @@ export class ui_main extends Component {
         this.game_manager_ptr.play_audio_Effect("button");
     }
     ///////////////////////////////////////////////////////////////////////////
-
 
     // 玩家飞机 移动\子弹发射 相关接口 ///////////////////////////////////////////
     touch_start(event: EventTouch){
