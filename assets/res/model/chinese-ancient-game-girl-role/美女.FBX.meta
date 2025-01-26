@@ -1,0 +1,207 @@
+{
+  "ver": "2.3.13",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "3f214beb-c504-4ba5-88ad-ea7b6fccb9e9",
+  "files": [],
+  "subMetas": {
+    "16cc5": {
+      "importer": "gltf-mesh",
+      "uuid": "3f214beb-c504-4ba5-88ad-ea7b6fccb9e9@16cc5",
+      "displayName": "",
+      "id": "16cc5",
+      "name": "mo_228.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 2976
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "37d89": {
+      "importer": "texture",
+      "uuid": "3f214beb-c504-4ba5-88ad-ea7b6fccb9e9@37d89",
+      "displayName": "",
+      "id": "37d89",
+      "name": "mo_228_t001.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "81db2b24-18ba-4aa9-8244-7765f7d7ac4c"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "98f5d": {
+      "importer": "gltf-material",
+      "uuid": "3f214beb-c504-4ba5-88ad-ea7b6fccb9e9@98f5d",
+      "displayName": "",
+      "id": "98f5d",
+      "name": "mo_228.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "8b079": {
+      "importer": "gltf-scene",
+      "uuid": "3f214beb-c504-4ba5-88ad-ea7b6fccb9e9@8b079",
+      "displayName": "",
+      "id": "8b079",
+      "name": "美女.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "mo_228_t001",
+        "remap": "81db2b24-18ba-4aa9-8244-7765f7d7ac4c",
+        "uri": "db://assets/res/model/chinese-ancient-game-girl-role/mo_228_t001.dds"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "3f214beb-c504-4ba5-88ad-ea7b6fccb9e9@16cc5"
+      ],
+      "skeletons": [],
+      "textures": [
+        "3f214beb-c504-4ba5-88ad-ea7b6fccb9e9@37d89"
+      ],
+      "materials": [
+        "3f214beb-c504-4ba5-88ad-ea7b6fccb9e9@98f5d"
+      ],
+      "scenes": [
+        "3f214beb-c504-4ba5-88ad-ea7b6fccb9e9@8b079"
+      ]
+    },
+    "materials": {
+      "3f214beb-c504-4ba5-88ad-ea7b6fccb9e9@98f5d": {
+        "__type__": "cc.Material",
+        "_name": "",
+        "_objFlags": 0,
+        "__editorExtras__": {},
+        "_native": "",
+        "_effectAsset": {
+          "__uuid__": "2ec11458-f855-4978-b14d-f3ed5cf697fa",
+          "__expectedType__": "cc.EffectAsset"
+        },
+        "_techIdx": 0,
+        "_defines": [
+          {
+            "USE_ALBEDO_MAP": true
+          },
+          {},
+          {},
+          {}
+        ],
+        "_states": [
+          {
+            "rasterizerState": {},
+            "depthStencilState": {},
+            "blendState": {
+              "targets": [
+                {}
+              ]
+            }
+          },
+          {
+            "rasterizerState": {},
+            "depthStencilState": {},
+            "blendState": {
+              "targets": [
+                {}
+              ]
+            }
+          },
+          {
+            "rasterizerState": {},
+            "depthStencilState": {},
+            "blendState": {
+              "targets": [
+                {}
+              ]
+            }
+          },
+          {
+            "rasterizerState": {},
+            "depthStencilState": {},
+            "blendState": {
+              "targets": [
+                {}
+              ]
+            }
+          }
+        ],
+        "_props": [
+          {
+            "mainColor": {
+              "__type__": "cc.Color",
+              "r": 218,
+              "g": 218,
+              "b": 218,
+              "a": 255
+            },
+            "mainTexture": {
+              "__uuid__": "3f214beb-c504-4ba5-88ad-ea7b6fccb9e9@37d89",
+              "__expectedType__": "cc.Texture2D"
+            },
+            "metallic": 0,
+            "emissiveScale": 0
+          },
+          {},
+          {},
+          {}
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,218 @@
+{
+  "ver": "2.3.13",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "566dc3c8-1ef7-4765-9083-7f99caa42b74",
+  "files": [],
+  "subMetas": {
+    "3b8cc": {
+      "importer": "gltf-mesh",
+      "uuid": "566dc3c8-1ef7-4765-9083-7f99caa42b74@3b8cc",
+      "displayName": "",
+      "id": "3b8cc",
+      "name": "chinese_rose_small.mesh",
+      "userData": {
+        "gltfIndex": 0,
+        "triangleCount": 539
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a5b78": {
+      "importer": "gltf-mesh",
+      "uuid": "566dc3c8-1ef7-4765-9083-7f99caa42b74@a5b78",
+      "displayName": "",
+      "id": "a5b78",
+      "name": "chinese_rose.mesh",
+      "userData": {
+        "gltfIndex": 1,
+        "triangleCount": 767
+      },
+      "ver": "1.1.1",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "e873a": {
+      "importer": "texture",
+      "uuid": "566dc3c8-1ef7-4765-9083-7f99caa42b74@e873a",
+      "displayName": "",
+      "id": "e873a",
+      "name": "file2.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/res/model/chinese-rose/chinese rose.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "72aef": {
+      "importer": "gltf-material",
+      "uuid": "566dc3c8-1ef7-4765-9083-7f99caa42b74@72aef",
+      "displayName": "",
+      "id": "72aef",
+      "name": "chinese_rose_mat.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "ea309": {
+      "importer": "gltf-scene",
+      "uuid": "566dc3c8-1ef7-4765-9083-7f99caa42b74@ea309",
+      "displayName": "",
+      "id": "ea309",
+      "name": "chinese rose.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "file2",
+        "uri": "db://assets/res/model/chinese-rose/chinese rose.png"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "lods": {
+      "enable": false,
+      "hasBuiltinLOD": false,
+      "options": [
+        {
+          "screenRatio": 0.25,
+          "faceCount": 1
+        },
+        {
+          "screenRatio": 0.125,
+          "faceCount": 0.25
+        },
+        {
+          "screenRatio": 0.01,
+          "faceCount": 0.1
+        }
+      ]
+    },
+    "assetFinder": {
+      "meshes": [
+        "566dc3c8-1ef7-4765-9083-7f99caa42b74@3b8cc",
+        "566dc3c8-1ef7-4765-9083-7f99caa42b74@a5b78"
+      ],
+      "skeletons": [],
+      "textures": [
+        "566dc3c8-1ef7-4765-9083-7f99caa42b74@e873a"
+      ],
+      "materials": [
+        "566dc3c8-1ef7-4765-9083-7f99caa42b74@72aef"
+      ],
+      "scenes": [
+        "566dc3c8-1ef7-4765-9083-7f99caa42b74@ea309"
+      ]
+    },
+    "materials": {
+      "566dc3c8-1ef7-4765-9083-7f99caa42b74@72aef": {
+        "__type__": "cc.Material",
+        "_name": "",
+        "_objFlags": 0,
+        "__editorExtras__": {},
+        "_native": "",
+        "_effectAsset": {
+          "__uuid__": "2ec11458-f855-4978-b14d-f3ed5cf697fa",
+          "__expectedType__": "cc.EffectAsset"
+        },
+        "_techIdx": 0,
+        "_defines": [
+          {
+            "USE_ALBEDO_MAP": true,
+            "USE_TRANSPARENCY_MAP": true
+          },
+          {},
+          {},
+          {}
+        ],
+        "_states": [
+          {
+            "rasterizerState": {},
+            "depthStencilState": {},
+            "blendState": {
+              "targets": [
+                {}
+              ]
+            }
+          },
+          {
+            "rasterizerState": {},
+            "depthStencilState": {},
+            "blendState": {
+              "targets": [
+                {}
+              ]
+            }
+          },
+          {
+            "rasterizerState": {},
+            "depthStencilState": {},
+            "blendState": {
+              "targets": [
+                {}
+              ]
+            }
+          },
+          {
+            "rasterizerState": {},
+            "depthStencilState": {},
+            "blendState": {
+              "targets": [
+                {}
+              ]
+            }
+          }
+        ],
+        "_props": [
+          {
+            "mainTexture": {
+              "__uuid__": "566dc3c8-1ef7-4765-9083-7f99caa42b74@e873a",
+              "__expectedType__": "cc.Texture2D"
+            },
+            "metallic": 0
+          },
+          {},
+          {},
+          {}
+        ]
+      }
+    }
+  }
+}
