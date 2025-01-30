@@ -1,4 +1,4 @@
-import { _decorator, BoxCollider, Component, instantiate, math, Node, Prefab, sp, Vec3, macro, Label, Animation} from 'cc';
+import { _decorator, BoxCollider, Component, instantiate, math, Node, Prefab, sp, Vec3, macro, Label, Animation } from 'cc';
 import { bullet } from '../bullet/bullet';
 import { constant } from './constant';
 import { enemy_plane } from '../plane/enemy_plane';
@@ -104,18 +104,64 @@ export class game_manager extends Component {
 
     private init() {
         this.m_current_shooting_time = this.shoot_time;
-        this.m_is_shooting = false; 
+        this.m_is_shooting = false;
         this.m_curr_create_enemy_time = 0;
         this.m_level_interval = constant.level.LEVEL1;
         this.m_bullet_prop_type = constant.bullet_prop_type.BULLET_I;
         this.m_score = 0;
         this.player_plane.node.setPosition(0, 3, 9);    // 设置玩家飞机的初始位置 
-    }   
+
+        this.setupParentMessageListener();
+        this.sendMessageToParent({ type: "gameReady" });
+    }
+
+    // 设置父级消息监听器
+    private setupParentMessageListener() {
+        window.addEventListener("message", (event: MessageEvent) => {
+            // 安全验证：检查消息来源是否符合预期
+            // if (event.origin !== "https://your-parent-domain.com") return;
+
+            const data = event.data;
+            console.log("收到父级消息:", data);
+
+            switch (data.type) {
+                case "startGame":
+                    this.game_start();
+                    break;
+
+                case "resetGame":
+                    this.game_start();
+                    break;
+
+                case "gameOver":
+                    this.game_over();
+                    break;
+
+                default:
+                    console.warn("未知消息类型:", data.type);
+            }
+        });
+    }
+
+    // 向父级发送消息
+    private sendMessageToParent(message: any) {
+        if (window.parent) {
+            window.parent.postMessage(message, "*"); // 生产环境应指定具体 origin
+        }
+    }
+
+    // 示例：更新分数并通知父级
+    private updateScore() {
+        this.sendMessageToParent({
+            type: "scoreUpdate",
+            score: this.m_score
+        });
+    }
 
     update(deltaTime: number) {
-        if(!this.m_is_game_start) return;
+        if (!this.m_is_game_start) return;
 
-        if(this.player_plane.m_is_die) {
+        if (this.player_plane.m_is_die) {
             this.game_over();
             return;
         }
@@ -132,22 +178,22 @@ export class game_manager extends Component {
 
     public game_start() {
         this.m_is_game_start = true;
-        this.init();        
+        this.init();
         this.player_plane.init();                       // 重置玩家飞机状态
         this.change_plane_mode();                       // 关卡设置
         this.change_bullet_prope();                     // 道具设置        
         this.gameing_score_UI.string = this.m_score.toString();
         this.overAnim.play();
     }
-    
-    public return_gameing() {        
+
+    public return_gameing() {
         this.game_start();
     }
 
     public game_over() {
         this.m_is_game_start = false;
         this.gameing_UI.active = false;
-        this.game_over_UI.active = true;        
+        this.game_over_UI.active = true;
         this.game_over_score_UI.string = this.m_score.toString();
         this.init();
         this.unschedule(this.create_bullet_prop_changed);   // 取消道具产生的回调
@@ -157,11 +203,11 @@ export class game_manager extends Component {
 
     public destroy_all_obj() {
         let length = this.node.children.length;
-        for(let i = length - 1; i >= 0; --i)
+        for (let i = length - 1; i >= 0; --i)
             pool_manager.instance().putNode(this.node.children[i]);
 
         length = this.bullet_root;
-        for(let i = length - 1; i >= 0; --i)
+        for (let i = length - 1; i >= 0; --i)
             pool_manager.instance().putNode(this.bullet_root.children[i]);
 
     }
@@ -179,15 +225,15 @@ export class game_manager extends Component {
     public is_create_bullet(deltaTime: number) {
         this.m_current_shooting_time += deltaTime;
         if (!this.m_is_shooting || this.m_current_shooting_time <= this.shoot_time) return;
-        if(this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_H) {
+        if (this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_H) {
             this.create_self_bullet_H();
             this.play_audio_Effect("bullet1", 0.3);
-        }            
-        else if(this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_S) {
+        }
+        else if (this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_S) {
             this.create_self_bullet_S();
             this.play_audio_Effect("bullet1", 0.3);
         }
-        else if(this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_M) {
+        else if (this.m_bullet_prop_type === constant.bullet_prop_type.BULLET_M) {
             this.create_self_bullet_M();
             this.play_audio_Effect("bullet1", 0.3);
         }
@@ -204,18 +250,18 @@ export class game_manager extends Component {
     }
 
     // 实例化子弹对象
-    private create_bullet_detail(Bullet: Prefab, offset: number, dir = constant.bullet_dirction.MIDLE){
+    private create_bullet_detail(Bullet: Prefab, offset: number, dir = constant.bullet_dirction.MIDLE) {
         const pos = this.player_plane.node.position;                    // 获取当前飞机的位置
         const blt = pool_manager.instance().getNode(Bullet, this.bullet_root);  // 实例子弹对象
         blt.setPosition(pos.x + offset, pos.y, pos.z - 1.0);            // 子弹生成的位置
         const bullet_comp = blt.getComponent(bullet);                   // 获取子弹的componet
         bullet_comp.set_bullet_dirction(dir);
 
-        if(dir === constant.bullet_dirction.ROTATION_R) 
+        if (dir === constant.bullet_dirction.ROTATION_R)
             bullet_comp.set_bullet_speed(this.player_bullet_speed, false);
-        else 
+        else
             bullet_comp.set_bullet_speed(-this.player_bullet_speed, false);
-        
+
         bullet_comp.set_init_x_pos(pos.x + offset);
     }
 
@@ -223,17 +269,17 @@ export class game_manager extends Component {
         this.create_bullet_detail(this.bullet01, 0.0);
     }
 
-    private create_self_bullet_M() {       
+    private create_self_bullet_M() {
         this.create_bullet_detail(this.bullet05, 0.0);  // 中
         this.create_bullet_detail(this.bullet05, -0.6, constant.bullet_dirction.LEFT);  // 左
         this.create_bullet_detail(this.bullet05, 0.6, constant.bullet_dirction.RIGHT);  // 右
     }
 
-    private create_self_bullet_H() {        
+    private create_self_bullet_H() {
         this.create_bullet_detail(this.bullet01, -0.6); // 左
         this.create_bullet_detail(this.bullet01, 0.6);  // 右
-    }    
-    
+    }
+
     private create_self_bullet_S() {
         this.create_bullet_detail(this.bullet03, -0.6, constant.bullet_dirction.ROTATION_L);   // 旋转
         this.create_bullet_detail(this.bullet03, 0.6, constant.bullet_dirction.ROTATION_R);   // 旋转
@@ -246,7 +292,7 @@ export class game_manager extends Component {
     public change_bullet_type(type: number) {
         this.m_bullet_prop_type = type;
     }
-    
+
     // 使用定时器来触发回调产生道具
     private change_bullet_prope() {
         this.schedule(this.create_bullet_prop_changed, 10, macro.REPEAT_FOREVER);    // 10秒一次回调，进3次
@@ -257,7 +303,7 @@ export class game_manager extends Component {
         // 随机选择道具类型
         const random_prop = math.randomRangeInt(1, 4);
         let prefeb: Prefab = null;
-        if(random_prop === constant.bullet_prop_type.BULLET_H) {
+        if (random_prop === constant.bullet_prop_type.BULLET_H) {
             prefeb = this.bullet_prop_H;
         } else if (random_prop === constant.bullet_prop_type.BULLET_S) {
             prefeb = this.bullet_prop_S;
@@ -276,14 +322,15 @@ export class game_manager extends Component {
     public add_score() {
         ++this.m_score;
         this.gameing_score_UI.string = this.m_score.toString();
+        this.updateScore();
     }
     ///////////////////////////////////////////////////////////////////////////////////
 
 
     // 敌机子弹相关接口 ///////////////////////////////////////////////////////////////////
     // 实例化敌机子弹对象
-    public create_enemy_bullet(target_pos: Vec3) {  
-        const blt = pool_manager.instance().getNode(this.bullet02, this.bullet_root);      
+    public create_enemy_bullet(target_pos: Vec3) {
+        const blt = pool_manager.instance().getNode(this.bullet02, this.bullet_root);
         blt.setPosition(target_pos.x, target_pos.y, target_pos.z + 1.0);    // 子弹生成的位置
         const bullet_comp = blt.getComponent(bullet);                       // 获取子弹的componet
         bullet_comp.set_bullet_speed(this.enemy_bullet_speed, true);        // 设置子弹的速度
@@ -304,7 +351,7 @@ export class game_manager extends Component {
 
     // 设置关卡数
     private call_back_level_changed() {
-        if(this.m_level_interval === constant.level.LEVEL3) return;
+        if (this.m_level_interval === constant.level.LEVEL3) return;
         this.m_level_interval++;
     }
     ///////////////////////////////////////////////////////////////////////////////////
