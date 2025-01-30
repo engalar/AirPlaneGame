@@ -3,6 +3,10 @@ const { ccclass, property } = _decorator;
 
 @ccclass('CreateLabel')
 export class CreateLabel extends Component {
+    // 增加 offset 参数，用于调整 UI 标签的位置偏移
+    @property(Vec3)
+    public offset: Vec3 = new Vec3(0, 0, 0);
+
     // 用于存储 Label 节点和相机引用
     private labelNode: Node | null = null;
     private mainCamera: Camera | null = null;
@@ -55,8 +59,8 @@ export class CreateLabel extends Component {
 
         // 设置 Label 属性
         labelComponent.string = 'Hello, Cocos!';
-        labelComponent.fontSize = 30;
-        labelComponent.color = Color.WHITE;
+        labelComponent.fontSize = 60;
+        labelComponent.color = Color.BLUE;
         labelComponent.lineHeight = 40;
         labelComponent.horizontalAlign = Label.HorizontalAlign.CENTER;
         labelComponent.verticalAlign = Label.VerticalAlign.CENTER;
@@ -65,7 +69,7 @@ export class CreateLabel extends Component {
         planLabelsNode.addChild(this.labelNode);
 
         // 设置锚点（可选）
-        const uiTransform = this.labelNode.addComponent(UITransform);
+        const uiTransform = this.labelNode.getComponent(UITransform);
 
         uiTransform.anchorX = 0.5;
         uiTransform.anchorY = 0.5;
@@ -79,7 +83,7 @@ export class CreateLabel extends Component {
         }
 
         // 获取3D节点的世界坐标
-        const worldPos = this.node.getWorldPosition(this.tempWorldPos);
+        const worldPos = this.node.getChildByName('LabelRef').getWorldPosition(this.tempWorldPos);
 
         // 将3D世界坐标转换为主相机的屏幕坐标
         this.mainCamera.worldToScreen(worldPos, this.tempScreenPos);
@@ -98,7 +102,7 @@ export class CreateLabel extends Component {
         const parent = this.labelNode.parent;
         if (parent) {
             const uiLocalPos = parent.getComponent(UITransform)!.convertToNodeSpaceAR(uiWorldPos);
-            this.labelNode.setPosition(uiLocalPos);
+            this.labelNode.setPosition(uiLocalPos.add(this.offset));
         } else {
             this.labelNode.setPosition(uiWorldPos);
         }
