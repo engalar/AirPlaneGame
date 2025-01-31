@@ -1,4 +1,4 @@
-import { _decorator, BoxCollider, Component, instantiate, math, Node, Prefab, sp, Vec3, macro, Label, Animation } from 'cc';
+import { _decorator, BoxCollider, Component, instantiate, math, Node, Prefab, sp, Vec3, macro, Label, Animation, find } from 'cc';
 import { bullet } from '../bullet/bullet';
 import { constant } from './constant';
 import { enemy_plane } from '../plane/enemy_plane';
@@ -100,6 +100,8 @@ export class game_manager extends Component {
     // 流程相关接口 //////////////////////////////////////////////////////////////////////
     start() {
         this.init();
+        this.setupParentMessageListener();
+        this.sendMessageToParent({ type: "gameReady" });
     }
 
     private init() {
@@ -110,9 +112,6 @@ export class game_manager extends Component {
         this.m_bullet_prop_type = constant.bullet_prop_type.BULLET_I;
         this.m_score = 0;
         this.player_plane.node.setPosition(0, 3, 9);    // 设置玩家飞机的初始位置 
-
-        this.setupParentMessageListener();
-        this.sendMessageToParent({ type: "gameReady" });
     }
 
     // 设置父级消息监听器
@@ -126,10 +125,8 @@ export class game_manager extends Component {
 
             switch (data.type) {
                 case "startGame":
-                    this.game_start();
-                    break;
-
                 case "resetGame":
+                    find("Canvas/gameStartUI").active = false;
                     this.game_start();
                     break;
 
