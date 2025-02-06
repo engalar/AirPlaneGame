@@ -38,7 +38,7 @@
       "fitHeight": true,
       "width": 1080,
       "height": 2400,
-      "fitWidth": true
+      "fitWidth": false
     }
   },
   "script": {
